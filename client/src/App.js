@@ -3,12 +3,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import axios from 'axios'
 
 //Admino komponentai
-import Saloons from './pages/admin/Saloons/Saloons'
-import NewSaloon from './pages/admin/Saloons/New'
-import EditSaloon from './pages/admin/Saloons/Edit'
+import Books from './pages/admin/Books/Books.js'
+import NewBook from './pages/admin/Books/New'
+import EditBook from './pages/admin/Books/Edit'
+import Users from './pages/admin/Users/Users'
+import UsersEdit from './pages/admin/Users/Edit'
 
 //Vartotojo komponentai
-import PublicSaloons from './pages/Saloons'
+import PublicBooks from './pages/Books'
 
 import PublicNewOrder from './pages/NewOrder'
 
@@ -52,14 +54,16 @@ const App = () => {
             {/* Admin keliai */}
             {userInfo.role === 1 &&
               <Route path="admin">
-                <Route index element={<Saloons />} />
-                <Route path="saloons/new" element={<NewSaloon />} />
-                <Route path="saloons/edit/:id" element={<EditSaloon />} />
+                <Route index element={<Books />} />
+                <Route path="books/new" element={<NewBook />} />
+                <Route path="books/edit/:id" element={<EditBook />} />
+                <Route path="users" element={<Users />} />
+                <Route path="users/edit/:id" element={<UsersEdit />} />
 
               </Route>
             }
             {/* Vieši keliai */}
-            <Route path="/" element={<PublicSaloons />} />
+            <Route path="/" element={<PublicBooks />} />
             {/* Prisijungusio vartotojo keliai */}
             {userInfo.id &&
               <>

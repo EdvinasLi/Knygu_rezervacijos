@@ -14,33 +14,33 @@ const Login = () => {
     const navigate = useNavigate()
 
     const handleForm = (e) => {
-        setForm({...form, [e.target.name]: e.target.value})
+        setForm({ ...form, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
         axios.post('/api/users/login/', form)
-        .then(resp => {
-            setUserInfo(resp.data.user)
-            setAlert({
-                message: resp.data.message,
-                status: 'success'
-            })
+            .then(resp => {
+                setUserInfo(resp.data.user)
+                setAlert({
+                    message: resp.data.message,
+                    status: 'success'
+                })
 
-            setTimeout(() => {
-                if(resp.data.user.role === 1)
-                    return navigate('/admin')
+                setTimeout(() => {
+                    if (resp.data.user.role === 1)
+                        return navigate('/admin')
 
-                navigate('/')
-            }, 1000)
-        })
-        .catch(error => {
-            setAlert({
-                message: error.response.data,
-                status: 'danger'
+                    navigate('/')
+                }, 1000)
             })
-        })
+            .catch(error => {
+                setAlert({
+                    message: error.response.data,
+                    status: 'danger'
+                })
+            })
     }
 
     return (
@@ -49,11 +49,11 @@ const Login = () => {
             <form onSubmit={handleSubmit}>
                 <div className="form-group mb-2">
                     <label className="mb-1">El. pašto adresas:</label>
-                    <input type="email" name="email" className="form-control" onChange={handleForm} placeholder="albertas.cenkus@gmail.com" />
+                    <input type="email" name="email" className="form-control" onChange={handleForm} placeholder="Jūsų el-paštas" />
                 </div>
                 <div className="form-group mb-3">
                     <label className="mb-1">Slaptažodis:</label>
-                    <input type="password" name="password" className="form-control" onChange={handleForm} placeholder="albertasnoributiore" />
+                    <input type="password" name="password" className="form-control" onChange={handleForm} placeholder="Jūsų slaptažodis" />
                 </div>
                 <button className="btn btn-primary">Prisijungti</button>
             </form>

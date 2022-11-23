@@ -5,19 +5,19 @@ const validate = (schema, req, res, next) => {
         abortEarly: true,
         stripUnknown: true
     }
-    const {error, value} = schema.validate(req.body, options)
-    
+    const { error, value } = schema.validate(req.body, options)
+
     let message = ''
 
-    if(error) {
-        switch(error.details[0].path[0]) {
+    if (error) {
+        switch (error.details[0].path[0]) {
             case 'first_name':
                 message = 'Neteisingai nurodytas vardas'
                 break
-            case 'last_name': 
+            case 'last_name':
                 message = 'Neteisingai nurodyta pavardė'
                 break
-            case 'email': 
+            case 'email':
                 message = 'Neteisingai nurodytas el. pašto adresas'
                 break
             case 'password':
@@ -77,11 +77,13 @@ export const servicesValidator = (req, res, next) => {
     validate(schema, req, res, next)
 }
 
-export const saloonsValidator = (req, res, next) => {
+export const booksValidator = (req, res, next) => {
     const schema = Joi.object({
-        address: Joi.string().min(2).required(),
-        name: Joi.string().min(2).required(),
-        phone: Joi.string().required()
+        title: Joi.string().min(2).required(),
+        category: Joi.string().min(2).required(),
+        description: Joi.string().required(),
+        author: Joi.string().required(),
+        photo: Joi.string().allow('')
     })
 
     validate(schema, req, res, next)

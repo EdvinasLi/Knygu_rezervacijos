@@ -1,7 +1,8 @@
 import express from 'express'
 import db from '../database/connect.js'
-import { saloonsValidator } from '../middleware/validate.js'
+import { booksValidator } from '../middleware/validate.js'
 import { adminAuth } from '../middleware/auth.js'
+import upload from '../middleware/multer.js'
 
 const Router = express.Router()
 
@@ -21,8 +22,8 @@ Router.get('/', async (req, res) => {
     }
 
     try {
-        const saloons = await db.Saloons.findAll(options)
-        res.json(saloons)
+        const books = await db.Books.findAll(options)
+        res.json(books)
     } catch (error) {
         console.log(error)
         res.status(500).send('Įvyko klaida')
@@ -31,29 +32,35 @@ Router.get('/', async (req, res) => {
 
 Router.get('/single/:id', adminAuth, async (req, res) => {
     try {
-        const saloon = await db.Saloons.findByPk(req.params.id)
-        res.json(saloon)
+        const books = await db.Books.findByPk(req.params.id)
+        res.json(books)
     } catch (error) {
         console.log(error)
         res.status(500).send('Įvyko klaida išssaugant duomenis')
     }
 })
 
-Router.post('/new', adminAuth, saloonsValidator, async (req, res) => {
+Router.post('/new', adminAuth, upload.single('photo'), booksValidator, async (req, res) => {
     try {
-        await db.Saloons.create(req.body)
-        res.send('Salonas sėkmingai sukurtas')
+        if (req.file)
+            req.body.photo = '/uploads/' + req.file.filename
+
+        await db.Books.create(req.body)
+        res.send('Knyga sėkmingai išsaugota')
     } catch (error) {
         console.log(error)
         res.status(500).send('Įvyko klaida išssaugant duomenis')
     }
 })
 
-Router.put('/edit/:id', adminAuth, saloonsValidator, async (req, res) => {
+Router.put('/edit/:id', adminAuth, upload.single('photo'), booksValidator, async (req, res) => {
     try {
-        const saloon = await db.Saloons.findByPk(req.params.id)
-        await saloon.update(req.body)
-        res.send('Salonas sėkmingai atnaujintas')
+        if (req.file)
+            req.body.photo = '/uploads/' + req.file.filename
+
+        const book = await db.Books.findByPk(req.params.id)
+        await book.update(req.body)
+        res.send('Knyga sėkmingai atnaujinta')
     } catch (error) {
         console.log(error)
         res.status(500).send('Įvyko klaida išssaugant duomenis')
@@ -62,9 +69,9 @@ Router.put('/edit/:id', adminAuth, saloonsValidator, async (req, res) => {
 
 Router.delete('/delete/:id', adminAuth, async (req, res) => {
     try {
-        const saloon = await db.Saloons.findByPk(req.params.id)
-        await saloon.destroy()
-        res.send('Salonas sėkmingai ištrintas')
+        const book = await db.Books.findByPk(req.params.id)
+        await book.destroy()
+        res.send('Knyga sėkmingai ištrinta')
     } catch (error) {
         console.log(error)
         res.status(500).send('Įvyko klaida')

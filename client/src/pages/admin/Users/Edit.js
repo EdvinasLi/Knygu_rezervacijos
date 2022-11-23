@@ -1,20 +1,21 @@
 import { useState, useContext, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import MainContext from '../../../context/MainContext'
 
-const NewWorker = () => {
+const EditUser = () => {
     const { setAlert } = useContext(MainContext)
+    const { id } = useParams()
     const navigate = useNavigate()
 
     const [form, setForm] = useState({
         first_name: '',
         last_name: '',
-        photo: '',
-        saloonId: ''
+        email: '',
+        role: ''
     })
 
-    const [saloons, setSaloons] = useState([])
+    const [users, setUsers] = useState([])
 
     const handleForm = (e) => {
         setForm({ ...form, [e.target.name]: e.target.name === 'photo' ? e.target.files[0] : e.target.value })
@@ -25,18 +26,18 @@ const NewWorker = () => {
 
         const formData = new FormData()
 
-        for(const key in form) {
+        for (const key in form) {
             formData.append(key, form[key])
         }
 
-        axios.post('/api/workers/new', formData)
+        axios.put('/api/users/edit/' + id, formData)
             .then(resp => {
                 setAlert({
                     message: resp.data,
                     status: 'success'
                 })
 
-                navigate('/admin/workers')
+                navigate('/admin/users')
             })
             .catch(error => {
                 console.log(error)
@@ -52,49 +53,63 @@ const NewWorker = () => {
     }
 
     useEffect(() => {
-        axios.get('/api/saloons/')
-        .then(resp => setSaloons(resp.data))
-        .catch(error => {
-            console.log(error)
-            setAlert({
-                message: error.response.data,
-                status: 'danger'
+        axios.get('/api/users/single/' + id)
+            .then(resp => setForm(resp.data))
+            .catch(error => {
+                setAlert({
+                    message: error.response.data,
+                    status: 'danger'
+                })
             })
-        })
-    }, [navigate, setAlert])
+    }, [id, setAlert])
+
+    useEffect(() => {
+        axios.get('/api/users/')
+            .then(resp => setUsers(resp.data))
+            .catch(error => {
+                console.log(error)
+                setAlert({
+                    message: error.response.data,
+                    status: 'danger'
+                })
+            })
+    }, [setAlert])
 
     return (
         <>
             <div className="container mw-50">
                 <div className="page-heading">
-                    <h1>Naujas darbuotojas</h1>
+                    <h1>Vartotojo redagavimas</h1>
                 </div>
                 <form onSubmit={(e) => handleSubmit(e)}>
                     <div className="form-group mb-2">
                         <label className="mb-1">Vardas:</label>
-                        <input type="text" name="first_name" className="form-control" onChange={handleForm} />
+                        <input type="text" name="first_name" className="form-control" onChange={handleForm} value={form.first_name} />
                     </div>
                     <div className="form-group mb-2">
                         <label className="mb-1">Pavardė:</label>
-                        <input type="text" name="last_name" className="form-control" onChange={handleForm} />
+                        <input type="text" name="last_name" className="form-control" onChange={handleForm} value={form.last_name} />
                     </div>
                     <div className="form-group mb-2">
                         <label className="mb-1">Nuotrauka:</label>
                         <input type="file" name="photo" className="form-control" onChange={handleForm} />
                     </div>
-                    <div className="form-group mb-2">
-                        <label className="mb-1">Grožio salonas:</label>
-                        <select 
-                        name="saloonId" 
-                        onChange={handleForm} 
-                        className="form-control" 
-                        required>
-                            <option value="">Pasirinkite saloną</option>
-                            {saloons.map(saloon => 
-                                <option key={saloon.id} value={saloon.id}>{saloon.name}</option>
-                            )}
-                        </select>
-                    </div>
+                    {form.photo && typeof form.photo === 'string' &&
+                        <div className="mb-2">
+                            <img src={form.photo} alt="" style={{ maxWidth: 200 }} />
+                            <div>
+                                <button
+                                    className="btn btn-danger mt-2"
+                                    onClick={(e) => {
+                                        setForm({ ...form, photo: '' })
+                                    }}
+                                >
+                                    Ištrinti nuotrauką
+                                </button>
+                            </div>
+                        </div>
+                    }
+
                     <button className="btn btn-primary">Išsaugoti</button>
                 </form>
             </div>
@@ -102,4 +117,4 @@ const NewWorker = () => {
     )
 }
 
-export default NewWorker
+export default EditUser

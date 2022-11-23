@@ -8,9 +8,11 @@ const NewSaloon = () => {
     const navigate = useNavigate()
 
     const [form, setForm] = useState({
-        name: '',
-        address: '',
-        phone: ''
+        title: '',
+        category: '',
+        description: '',
+        author: '',
+        photo: '',
     })
 
     const handleForm = (e) => {
@@ -20,7 +22,7 @@ const NewSaloon = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        axios.post('/api/saloons/new', form)
+        axios.post('/api/books/new', form)
             .then(resp => {
                 setAlert({
                     message: resp.data,
@@ -46,20 +48,29 @@ const NewSaloon = () => {
         <>
             <div className="container mw-50">
                 <div className="page-heading">
-                    <h1>Naujas grožio salonas</h1>
+                    <h1>Pridėkite naują knygą</h1>
                 </div>
                 <form onSubmit={(e) => handleSubmit(e)}>
                     <div className="form-group mb-2">
                         <label className="mb-1">Pavadinimas:</label>
-                        <input type="text" name="name" className="form-control" onChange={handleForm} />
+                        <input type="text" name="title" className="form-control" onChange={handleForm} />
                     </div>
                     <div className="form-group mb-2">
-                        <label className="mb-1">Adresas:</label>
-                        <input type="text" name="address" className="form-control" onChange={handleForm} />
+                        <label className="mb-1">Kategorija:</label>
+                        <input type="text" name="category" className="form-control" onChange={handleForm} />
+                    </div>
+
+                    <div className="form-group mb-2">
+                        <label className="mb-1">Aprašymas:</label>
+                        <input type="text" name="description" className="form-control" onChange={handleForm} />
                     </div>
                     <div className="form-group mb-2">
-                        <label className="mb-1">Telefono nr.:</label>
-                        <input type="text" name="phone" className="form-control" onChange={handleForm} />
+                        <label className="mb-1">Autorius:</label>
+                        <input type="text" name="author" className="form-control" onChange={handleForm} />
+                    </div>
+                    <div className="form-group mb-2">
+                        <label className="mb-1">Nuotrauka:</label>
+                        <input type="file" name="photo" className="form-control" onChange={handleForm} />
                     </div>
                     <button className="btn btn-primary">Siųsti</button>
                 </form>
